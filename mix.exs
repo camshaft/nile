@@ -3,7 +3,7 @@ defmodule Nile.Mixfile do
 
   def project do
     [app: :nile,
-     version: "0.1.0",
+     version: "0.1.1",
      elixir: "~> 1.0",
      description: "Elixir stream extensions",
      package: package,
