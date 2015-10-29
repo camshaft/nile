@@ -32,18 +32,21 @@ defmodule Nile do
   """
   defdelegate route_into(stream, router, factory), to: Nile.Router
 
+  defdelegate pmap(stream, fun), to: Nile.Pmap
+
   @doc """
   Map over a stream in parallel, spawning a pool of workers.
 
-  Options include
+  Options include:
 
   * concurrency (defaults to infinity)
   * timeout (defaults to infinity)
 
+  Before using, consider the cost of message passing between processes
+
       iex> Nile.pmap(0..26, &My.expensive_operation/1) |> Enum.to_list()
         [0,1,2,3,4..]
   """
-  defdelegate pmap(stream, fun), to: Nile.Pmap
   defdelegate pmap(stream, fun, opts), to: Nile.Pmap
 
   @doc """

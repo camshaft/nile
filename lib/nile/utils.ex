@@ -1,16 +1,7 @@
 defmodule Nile.Utils do
-  def put({:__COLLECTABLE__, collectable, prev}, :done) do
-    collectable.(prev, :done)
-  end
-  def put({:__COLLECTABLE__, collectable, prev}, value) do
-    next = collectable.(prev, value)
-    {:__COLLECTABLE__, collectable, next}
-  end
-  def put(collectable, value) do
-    {initial, collectable} = Collectable.into(collectable)
-    put({:__COLLECTABLE__, collectable, initial}, value)
-  end
-
+  @doc """
+  Fetch the next item in a stream. This will consume a single item at a time.
+  """
   def next(nil) do
     {:done, nil}
   end
@@ -35,5 +26,27 @@ defmodule Nile.Utils do
   end
   defp wrap_cont(other) do
     other
+  end
+
+  @doc """
+  Put a value into a collectable. This is a convinience wrapper around `Collectable.into/1`
+
+      iex> collectable = [] |>
+          Nile.Utils.put({:cont, 1}) |>
+          Nile.Utils.put({:cont, 2}) |>
+          Nile.Utils.put({:cont, 3}) |>
+          Nile.Utils.put(:done)
+        [1,2,3]
+  """
+  def put({:__COLLECTABLE__, collectable, prev}, :done) do
+    collectable.(prev, :done)
+  end
+  def put({:__COLLECTABLE__, collectable, prev}, value) do
+    next = collectable.(prev, value)
+    {:__COLLECTABLE__, collectable, next}
+  end
+  def put(collectable, value) do
+    {initial, collectable} = Collectable.into(collectable)
+    put({:__COLLECTABLE__, collectable, initial}, value)
   end
 end

@@ -1,4 +1,6 @@
 defmodule Nile.Pmap do
+  @moduledoc false
+
   require Record
   Record.defrecordp :state, [stream: nil,
                              fun: nil,

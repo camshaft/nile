@@ -1,4 +1,6 @@
 defmodule Nile.Router do
+  @moduledoc false
+
   def route_into(stream, router, factory) do
     consume(stream, router, factory, %{})
   end
