@@ -1,6 +1,12 @@
 defmodule NileTest do
   use ExUnit.Case
 
+  setup do
+    seed = ExUnit.configuration()[:seed] || :erlang.phash2(:erlang.now())
+    :random.seed({0,0,seed})
+    :ok
+  end
+
   test "route_into" do
     out = 0..100
     |> Nile.route_into(fn(value) ->
@@ -33,5 +39,17 @@ defmodule NileTest do
     |> Enum.to_list
 
     assert out == 0..100 |> Enum.to_list()
+  end
+
+  test "split" do
+    size = :random.uniform(200)
+
+    out = Stream.repeatedly(fn -> "line\n" end)
+    |> Stream.take(size)
+    |> Stream.chunk_by(fn (_) -> :random.uniform(2) == 1 end)
+    |> Nile.String.split()
+    |> Enum.to_list
+
+    assert length(out) == size
   end
 end
