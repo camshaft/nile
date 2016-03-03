@@ -52,4 +52,15 @@ defmodule NileTest do
 
     assert length(out) == size
   end
+
+  test "rescue" do
+    [first | _] = out = Stream.repeatedly(fn ->
+      raise RuntimeError
+    end)
+    |> Nile.Exception.rescue_stream(RuntimeError, fn(e) -> e end)
+    |> Enum.take(5)
+
+    assert length(out) == 5
+    assert first == %RuntimeError{}
+  end
 end
