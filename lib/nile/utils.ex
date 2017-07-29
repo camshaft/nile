@@ -28,6 +28,23 @@ defmodule Nile.Utils do
     other
   end
 
+  def halt(nil) do
+    :ok
+  end
+  def halt({:__SUSPENDED__, reducer}) when is_function(reducer) do
+    {:halt, nil}
+    |> reducer.()
+    :ok
+  end
+  def halt(reducer) when is_function(reducer) do
+    {:halt, nil}
+    |> reducer.(fn(_, _) -> {:halt, nil} end)
+    :ok
+  end
+  def halt(_) do
+    :ok
+  end
+
   @doc """
   Put a value into a collectable. This is a convinience wrapper around `Collectable.into/1`
 
@@ -49,4 +66,7 @@ defmodule Nile.Utils do
     {initial, collectable} = Collectable.into(collectable)
     put({:__COLLECTABLE__, collectable, initial}, value)
   end
+
+  def get_stream({_, stream}), do: stream
+  def get_stream({_, _, stream}), do: stream
 end

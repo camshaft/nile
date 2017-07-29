@@ -1,8 +1,10 @@
 defmodule NileTest do
   use ExUnit.Case
 
+  doctest Nile
+
   setup do
-    seed = ExUnit.configuration()[:seed] || :erlang.phash2(:erlang.now())
+    seed = ExUnit.configuration()[:seed] || :erlang.phash2(:os.timestamp())
     :random.seed({0,0,seed})
     :ok
   end
