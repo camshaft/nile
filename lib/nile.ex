@@ -148,9 +148,18 @@ defmodule Nile do
       [1,2,3,1,2,3,1,2,3]
   """
   def lazy_concat(fun) do
-    lazy_concat(nil, fn(s) ->
-      {fun.(), s}
-    end)
+    Stream.resource(
+      fn -> nil end,
+      fn(s) ->
+        case fun.() do
+          nil ->
+            {:halt, s}
+          stream ->
+            {stream, s}
+        end
+      end,
+      fn(_) -> :ok end
+    )
   end
 
   @doc """
@@ -162,7 +171,14 @@ defmodule Nile do
   def lazy_concat(state, fun) do
     Stream.resource(
       fn -> state end,
-      fun,
+      fn(s) ->
+        case fun.(s) do
+          nil ->
+            {:halt, s}
+          {stream, s} ->
+            {stream, s}
+        end
+      end,
       fn(_) -> :ok end
     )
   end
